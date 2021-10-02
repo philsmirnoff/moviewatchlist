@@ -3,7 +3,7 @@ const app = express();
 
 const PORT = 8080;
 
-const dbConnection = require("./db");
+const { dbConnection } = require("./db");
 
 const startServer = async () => {
   await dbConnection.sync();
@@ -13,39 +13,23 @@ const startServer = async () => {
 };
 startServer();
 
+// Matches any url for a GET request to a possible file
+// in the public directory.
+app.use(express.static(__dirname + "/public"));
+
+// Start of all middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+const genresRouter = require("./routes/genre");
+app.use("/genre", genresRouter);
+
+const moviesRouter = require("./routes/movie");
+app.use("/movies", moviesRouter);
+
+
 app.get("/", (req, res) => {
   res.send("Hello :)");
 });
 
-/*
-    Movie model
-        - title (not null)
-        - imdbLink (null)
-        - watched (not null, boolean, default false)
-    Genre model
-        - name (not null)
-    Many-to-many movies and genres
-    belongsToMany
-*/
 
-const Movie = dbConnection.define("movie", {
-  title: {
-    type: Sequelize.DataTypes.STRING(255),
-    allowNull: false,
-    validate: {
-      notEmpty: true
-    }
-  },
-  imdbLink: {
-    type: Sequelize.DataTypes.STRING(1000),
-    allowNull: true,
-    validate: {
-        isUrl: true
-    }
-},
-watched: {
-    type: Sequelize.DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
-}
-});
