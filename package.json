@@ -4,8 +4,8 @@
   "description": "self-hosted movie tracking website",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server/index.js"
+    "start": "nodemon server/index.js",
+    "seed": "node server/db/seed.js"
   },
   "author": "Ilfir Yakupov",
   "license": "ISC",
